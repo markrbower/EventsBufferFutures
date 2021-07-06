@@ -55,16 +55,20 @@ eventsBufferFutures <- function( accumulatorSize, FUN, recipient, primeSize=0 ) 
   
   getValue <- function() {
     readCount <<- readCount + 1
-    if ( !is.null(stack[[readCount]]) ) {
+    if ( readCount <= length(stack) ) {
       returnValue <- value(stack[[readCount]])
       return( returnValue )
     } else {
-      cat( "ERROR: Nothing on the stack to return at value ", readCount, "\n" )
+      readCount <<- readCount - 1
       return( NULL )
     }
   }
   
   flush <- function() {
+    # Check for an empty accumulator
+    if ( accumulatorCount == 0 ) {
+      return(NULL)
+    }
     # Flush the accumulator to the stack
     writeCount <<- writeCount + 1
     if ( !is.null(FUN) ) {
